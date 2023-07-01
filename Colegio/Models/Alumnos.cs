@@ -13,7 +13,7 @@ namespace Colegio.Models
         public int Edad { get; set; }
         public string Direccion { get; set; }
         public string Telefono { get; set; }
-        public string Cod_Asignatura { get; set; }
+        public int Cod_Asignatura { get; set; }
         public string calificacion { get; set; }
     }
 }

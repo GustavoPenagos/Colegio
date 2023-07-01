@@ -1,0 +1,57 @@
+﻿
+@Model List<Alumnos> 
+<main>
+    <section class="row" aria-labelledby="aspnetTitle">
+        <h1 id="title">ASP.NET</h1>
+        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+        <p class="lead">@ViewBag.Message</p>
+        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
+    </section>
+
+    <div class="row">
+        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
+            <h2 id="gettingStartedTitle">Getting started</h2>
+            <p>
+                Colegio .Net Listado de Alumnos y calificaciones
+            </p>
+        </section>
+    </div>
+    <div>
+        <table class="table table-striped-columns">
+            <thead>
+                <tr>
+                    <td>Año <br />academico </td>
+                    <td>Identificacion<br />Alumno </td>
+                    <td>Nombre<br />Alumno </td>
+                    <td>Codigo Materia </td>
+                    <td>Nombre materia </td>
+                    <td>Identifiacion <br /> profesor </td>
+                    <td>Nombre del profesor </td>
+                    <td>Calificacion final </td>
+                    <td>Aprobó</td>
+                </tr>
+            </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td>2023</td>
+                            <td>@item.Identificacion</td>
+                            <td>@item.Nombre  @item.Apellido</td>
+                            <td>@item.Cod_Asignatura</td>
+                            <td>nombre <br />materia</td>
+                            <td>id profesor</td>
+                            <td>nombre <br />profesor</td>
+                            <td>@item.calificacion</td>
+                            <td>Aprobo</td>
+
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+    </div>
+
+</main>

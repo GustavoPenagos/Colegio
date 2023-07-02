@@ -18,10 +18,20 @@
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Calificar", "Calificar", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Registrar Alumno", "RegistroAlumno", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Registrar Profesor", "RegistroProfesor", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    @*<li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>*@
+                    <li class="nav-link">|</li>
+                    <li>@Html.ActionLink("Registrar alumno", "RegistroAlumno", "Register", new { area = "" }, new { @class = "nav-link" })
+                    @Html.ActionLink("Lista de alumnos", "ListaAlumnos", "Lists", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li class="nav-link">|</li>
+                    <li>@Html.ActionLink("Registrar profesor", "RegistroProfesor", "Register", new { area = "" }, new { @class = "nav-link" })
+                    @Html.ActionLink("Lista de profesores", "ListaProfesores", "Lists", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li class="nav-link">|</li>
+                    <li>@Html.ActionLink("Registrar asignaturas", "RegistroAsignatura", "Register", new { area = "" }, new { @class = "nav-link" })
+                    @Html.ActionLink("Lista de asignaturas", "ListaAsignatura", "Lists", new { area = "" }, new { @class = "nav-link" })</li>
+                    
+                    <li class="nav-link">|</li>
+                    <li>@Html.ActionLink("Registrar clases", "RegistrarClase", "Register", new { area = "" }, new { @class = "nav-link" })
+                    @Html.ActionLink("Listar clases", "listarClase", "Lists", new { area = "" }, new { @class = "nav-link" })</li>
                 </ul>
             </div>
         </div>

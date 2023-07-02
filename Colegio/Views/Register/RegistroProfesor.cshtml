@@ -1,0 +1,93 @@
+﻿
+@{
+    ViewBag.Title = "Registro de profesores";
+}
+
+<h2>Registro de profesores</h2>
+
+<br />
+
+<div class="container">
+    <form action="/Register/InsertProfesor" method="post">
+        <table class="table table-striped-columns">
+            <thead>
+                <tr>
+                    <td>
+                        <p>Ingresar los datos del profesor</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Identificacion:</td>
+                    <td>
+                        <input type="text" id="identificacion" name="identificacion" placeholder="Identificacion" />
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nombre:</td>
+                    <td>
+                        <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Apellidos:</td>
+                    <td>
+                        <input type="text" id="apellido" name="apellido" placeholder="Apellido" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Edad:</td>
+                    <td>
+                        <input type="text" id="edad" name="edad" placeholder="Edad" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Direccion:</td>
+                    <td>
+                        <input type="text" id="direccion" name="direccion" placeholder="Direccion">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Telefono:</td>
+                    <td>
+                        <input type="text" id="telefono" name="telefono" placeholder="Telefono">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Asignatura:</td>
+                    <td>
+                        <select name="opciones" id="opciones" required>
+                            @foreach (var opt in ViewBag.Opciones)
+                            {
+                                <option value="@opt.Codigo" id="cod_Asignatura">@opt.Nombre</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2">
+                        <center><button type="submit" class="btn btn-primary" style="width:50%; ">Guardar</button></center>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+
+</div>
+<div>
+    @if (TempData.ContainsKey("AlertMessage"))
+    {
+        <div class="alert alert-@(TempData["AlertType"])">
+            @TempData["AlertMessage"]
+        </div>
+    }
+</div>
+
+

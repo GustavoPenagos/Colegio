@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewBag.Title = "RegistroAsignatura";
+}
+
+<h2>RegistroAsignatura</h2>
+
+<br />
+
+<div class="container">
+    <form action="/Register/InsertAsignatura" method="post">
+        <table class="table table-striped-columns">
+            <thead>
+                <tr>
+                    <td>
+                        <p>Ingresar los datos de la asignatura</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Codigo Asignatura:</td>
+                    <td>
+                        <input type="text" id="codigo" name="codigo" placeholder="codigo" />
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nombre asignatura:</td>
+                    <td>
+                        <input type="text" id="nombre_asignatura" name="nombre" placeholder="Nombre Asignatura" required>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2">
+                        <center><button type="submit" class="btn btn-primary" style="width:50%; ">Guardar</button></center>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+
+</div>
+<div>
+    @if (TempData.ContainsKey("AlertMessage"))
+    {
+        <div class="alert alert-@(TempData["AlertType"])">
+            @TempData["AlertMessage"]
+        </div>
+    }
+</div>
+

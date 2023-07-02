@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewBag.Title = "Lista de profesores";
+}
+<main>
+    <h2 id="title">@ViewBag.Title.</h2>
+    <h3>@ViewBag.Message</h3>
+
+   <br />
+    <div>
+        <table class="table table-striped-columns">
+            <thead>
+                <tr>
+                    <td>Año <br />academico </td>
+                    <td>Identificacion<br />Alumno </td>
+                    <td>Nombre<br />Alumno </td>
+                    <td>Edad</td>
+                    <td>Direccion</td>
+                    <td>Telefono</td>
+                    <td>Materia</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>2023</td>
+                        <td>@item.Identificacion</td>
+                        <td>@item.Nombre</td>
+                        <td>@item.Edad</td>
+                        <td>@item.Direccion</td>
+                        <td>@item.Telefono</td>
+                        <td>@item.Asignatura</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</main>

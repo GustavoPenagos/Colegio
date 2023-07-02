@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "Lista de asignatura";
+}
+
+<h2>Lista de asignaturas</h2>
+
+<br />
+<div>
+    <table class="table table-striped-columns">
+        <thead>
+            <tr>
+                <td>Codigo<br />asignatura</td>
+                <td>Nombre<br />asignatura</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Codigo</td>
+                    <td>@item.Nombre</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

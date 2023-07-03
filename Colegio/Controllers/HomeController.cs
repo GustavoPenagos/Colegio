@@ -44,11 +44,11 @@ namespace Colegio.Controllers
         {
             try
             {
-                List<Asignaturas> asignaturasList = new List<Asignaturas>();
+                List<Asignatura> asignaturasList = new List<Asignatura>();
 
                 HttpClient client = new HttpClient();
 
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "ListaAsignaura";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/lista/asignaturas";
                 HttpResponseMessage ResponseAsignatura = await client.GetAsync(apiCrud);
                 if (ResponseAsignatura.IsSuccessStatusCode)
                 {
@@ -57,8 +57,8 @@ namespace Colegio.Controllers
 
                     foreach (DataRow row in data.Rows)
                     {
-                        Asignaturas asignatura = new Asignaturas();
-                        asignatura.Codigo = Convert.ToInt32(row["Codigo"].ToString());
+                        Asignatura asignatura = new Asignatura();
+                        asignatura.Codigo = row["Codigo"].ToString();
                         asignatura.Nombre = row["Nombre"].ToString();
                         asignaturasList.Add(asignatura);
                     }

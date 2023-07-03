@@ -7,15 +7,40 @@
 
     <br />
     <div>
-        <table class="table table-striped-columns">
-            <thead>
-                <tr>
+        <div>
+            <form action="/Lists/Buscar" method="post">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td>
+                                <center><label>Buscar</label></center>
+                            </td>
+                            <td>
+                                <input type="number" id="buscar" name="buscar" value="Alumno" placeholder="Buscar Identificacion" required />
+                                <input type="hidden" id="name" name="name" value="Alumno" readonly />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="2"><button type="submit" class="btn btn-primary" style="width:30%; ">Buscar</button></td>
+                        </tr>
+                    </thead>
+                </table>
+            </form>
+        </div>
+        <br />
+        <table class="table table-striped">
+            <thead class="bg-dark">
+                <tr class="text-white">
                     <td>Año <br />academico </td>
                     <td>Identificacion<br />Alumno </td>
                     <td>Nombre<br />Alumno </td>
                     <td>Edad</td>
                     <td>Direccion</td>
                     <td>Telefono</td>
+                    <td>Asignatura</td>
+                    <td>Calificacion</td>
+                    <td colspan="2"><center>Acciones</center></td>
                 </tr>
             </thead>
             <tbody>
@@ -23,11 +48,23 @@
                 {
                     <tr>
                         <td>2023</td>
-                        <td>@item.Identificacion</td>
-                        <td>@item.Nombre</td>
+                        <td>@item.Id_Alumno</td>
+                        <td>@item.Nombre @item.Apellido</td>
                         <td>@item.Edad</td>
                         <td>@item.Direccion</td>
                         <td>@item.Telefono</td>
+                        <td>@item.Asignatura</td>
+                        <td>@item.Calificacion</td>
+                        <td>
+                            <a href="@Url.Action("Editar", "Crud", new { id = item.Id_Alumno, asg = item.Asignatura ,name = "Alumno"})">
+                                <img src="~/Content/Images/pencil-fill.svg" class="card-img-bottom" alt="Imagen" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("EliminarAlumno", "Crud", new {id = item.Id_Alumno, name = "Alumno"}) ">
+                                <img src="~/Content/Images/trash2-fill.svg" class="card-img-bottom" alt="Imagen" />
+                            </a>
+                        </td>
                     </tr>
                 }
             </tbody>

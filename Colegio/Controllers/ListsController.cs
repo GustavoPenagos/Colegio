@@ -1,7 +1,8 @@
 ﻿using Colegio.Models;
-using Colegio.Models.Views;
+using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -26,9 +27,19 @@ namespace Colegio.Controllers
         {
             try
             {
-                var dataAlumno = await ObtenerAlumnoAsync();
+                List<Alumno> data = (List<Alumno>)Session["Lista"];
+
+                if (data != null)
+                {
+                    Session.Clear();
+                    return View(data);
+                }else
+                {
+                    var dataAlumno = await ObtenerAlumnoAsync();
+                    return View(dataAlumno);
+                }               
                 
-                return View(dataAlumno);
+                
             }
             catch (Exception ex)
             {
@@ -62,36 +73,24 @@ namespace Colegio.Controllers
             }
         }
 
-        public async Task<ActionResult> listarClase()
-        {
-            try
-            {
-                var dataClases = await ObtenerClases();
-
-                return View(dataClases);
-
-            }catch (Exception ex)
-            {
-                return View("Error", ex.Message);
-            }
-        }
         #endregion
 
-        #region Operadores de las listas
         /// <summary>
         /// Obtener la data de las diretentes tablas
         /// </summary>
         /// <returns></returns>
+        /// 
+        #region Operadores de las listas
 
         public async Task<dynamic> ObtenerAlumnoAsync()
         {
-            List<Alumnos> alumnosList = new List<Alumnos>();
+            List<Alumno> alumnosList = new List<Alumno>();
             try
             {
 
                 HttpClient client = new HttpClient();
 
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "ListaAlumnos";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/lista/alumnos";
                 HttpResponseMessage ResponseAlumno = await client.GetAsync(apiCrud);
                 if (ResponseAlumno.IsSuccessStatusCode)
                 {
@@ -100,21 +99,32 @@ namespace Colegio.Controllers
                     
                     foreach (DataRow row in data.Rows)
                     {
-                        Alumnos alumno = new Alumnos();
-                        alumno.Identificacion = row["Identificacion"].ToString();
+                        Alumno alumno = new Alumno();
+                        alumno.Id_Alumno = row["Id_Alumno"].ToString();
                         alumno.Nombre = row["Nombre"].ToString();
                         alumno.Apellido = row["Apellido"].ToString();
-                        alumno.Edad = Convert.ToInt32(row["Edad"].ToString());
+                        alumno.Edad = row["Edad"].ToString();
                         alumno.Direccion = row["Direccion"].ToString();
                         alumno.Telefono = row["Telefono"].ToString();
-                        
+
+                        //var materia = await new HomeController().ObtenerAsignauraAsync();
+                        //foreach(var item in materia)
+                        //{
+                        //    if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
+                        //    {
+                        //        alumno.Asignatura = item.Nombre;
+                        //    }    
+                        //}
+                        alumno.Asignatura = row["Asignatura"].ToString();
+                        alumno.Calificacion = row["Calificacion"].ToString();
+
                         alumnosList.Add(alumno);
                     }
                     return alumnosList;
                 }
                 else
                 {
-                    return alumnosList;
+                    return View("Error");
                 }
             }
             catch (InvalidOperationException ex)
@@ -128,11 +138,11 @@ namespace Colegio.Controllers
         {
             try
             {
-                List<View_Profesores> profesorList = new List<View_Profesores>();
+                List<Profesores> profesorList = new List<Profesores>();
 
                 HttpClient client = new HttpClient();
 
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "ListaProfesores";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/lista/profesores";
                 HttpResponseMessage ResponseAsignatura = await client.GetAsync(apiCrud);
                 if (ResponseAsignatura.IsSuccessStatusCode)
                 {
@@ -141,13 +151,22 @@ namespace Colegio.Controllers
 
                     foreach (DataRow row in data.Rows)
                     {
-                        View_Profesores profesor = new View_Profesores();
-                        profesor.Identificacion = row["Identificacion"].ToString();
+                        Profesores profesor = new Profesores();
+                        profesor.Id_Profesor = row["Id_Profesor"].ToString();
                         profesor.Nombre = row["Nombre"].ToString();
-                        profesor.Edad = Convert.ToInt16(row["Edad"].ToString());
+                        profesor.Apellido = row["Apellido"].ToString();
+                        profesor.Edad = row["Edad"].ToString();
                         profesor.Direccion = row["Direccion"].ToString();
                         profesor.Telefono = row["Telefono"].ToString();
-                        profesor.Asignatura = row["Asignatura"].ToString();
+
+                        var materia = await new HomeController().ObtenerAsignauraAsync();
+                        foreach (var item in materia)
+                        {
+                            if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
+                            {
+                                profesor.Asignatura = item.Nombre;
+                            }
+                        }
 
                         profesorList.Add(profesor);
                     }
@@ -169,11 +188,11 @@ namespace Colegio.Controllers
         {
             try
             {
-                List<Asignaturas> AsignaturaList = new List<Asignaturas>();
+                List<Asignatura> AsignaturaList = new List<Asignatura>();
 
                 HttpClient client = new HttpClient();
 
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "ListaAsignaura";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/lista/asignaturas";
                 HttpResponseMessage ResponseAsignatura = await client.GetAsync(apiCrud);
                 if (ResponseAsignatura.IsSuccessStatusCode)
                 {
@@ -182,8 +201,8 @@ namespace Colegio.Controllers
 
                     foreach (DataRow row in data.Rows)
                     {
-                        Asignaturas asignatura = new Asignaturas();
-                        asignatura.Codigo = Convert.ToInt32(row["Codigo"].ToString());
+                        Asignatura asignatura = new Asignatura();
+                        asignatura.Codigo = row["Codigo"].ToString();
                         asignatura.Nombre = row["Nombre"].ToString();
 
                         AsignaturaList.Add(asignatura);
@@ -202,39 +221,77 @@ namespace Colegio.Controllers
             }
         }
 
-        public async Task<dynamic> ObtenerClases()
+        public async Task<dynamic> Buscar(string buscar, string asg, string name, string accion=null)
         {
             try
             {
-                List<View_Clases> clasesList = new List<View_Clases>();
-
+                List<Alumno> alumnosList = new List<Alumno>();
                 HttpClient client = new HttpClient();
+                string url = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/buscar" + "?Id=" + buscar + "&asg=" + asg + "&name=" + name;
+                string responseData = "";
 
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "ListaClases";
-                HttpResponseMessage ResponseAsignatura = await client.GetAsync(apiCrud);
-                if (ResponseAsignatura.IsSuccessStatusCode)
+                HttpResponseMessage httpResponse = await client.GetAsync(url);
+                if (httpResponse.IsSuccessStatusCode)
                 {
-                    string response = await ResponseAsignatura.Content.ReadAsStringAsync();
+                    string response = await httpResponse.Content.ReadAsStringAsync();
                     DataTable data = JsonConvert.DeserializeObject<DataTable>(response);
 
                     foreach (DataRow row in data.Rows)
                     {
-                        View_Clases clases = new View_Clases();
-                        clases.Id_Alumno = row["Id_Alumno"].ToString();
-                        clases.Nombre_Alumno = row["NombreAlumno"].ToString();
-                        clases.Id_Profesor = row["Id_Profesor"].ToString();
-                        clases.Nombre_Profesor = row["NombreProfesor"].ToString();
-                        clases.Asignatura = row["Asignatura"].ToString();
+                        Alumno alumno = new Alumno();
+                        alumno.Id_Alumno = row["Id_Alumno"].ToString();
+                        alumno.Nombre = row["Nombre"].ToString();
+                        alumno.Apellido = row["Apellido"].ToString();
+                        alumno.Edad = row["Edad"].ToString();
+                        alumno.Direccion = row["Direccion"].ToString();
+                        alumno.Telefono = row["Telefono"].ToString();
 
-                        clasesList.Add(clases);
+                        if (accion != null)
+                        {
+                            switch (accion)
+                            {
+                                case "registro":
+                                    alumno.Asignatura = row["Asignatura"].ToString();
+                                    break;
+                                case "Editar":
+                                    var materia = await new HomeController().ObtenerAsignauraAsync();
+                                    foreach (var item in materia)
+                                    {
+                                        if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
+                                        {
+                                            alumno.Asignatura = item.Codigo;
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            var materia = await new HomeController().ObtenerAsignauraAsync();
+                            foreach (var item in materia)
+                            {
+                                if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
+                                {
+                                    alumno.Asignatura = item.Nombre;
+                                }
+                            }
+                        }                      
+
+                        alumno.Calificacion = row["Calificacion"].ToString();
+
+                        alumnosList.Add(alumno);
                     }
-
-                    return clasesList;
+                    if (accion != null)
+                    {
+                        return alumnosList;
+                    }
+                    else
+                    {
+                        Session["Lista"] = alumnosList;
+                        return RedirectToAction("ListaAlumnos", "Lists");
+                    }
                 }
-                else
-                {
-                    return View("Error");
-                }
+                return responseData;
             }
             catch (Exception ex)
             {

@@ -120,20 +120,17 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\CrudController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ListsController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Alumnos.cs" />
-    <Compile Include="Models\Asignaturas.cs" />
-    <Compile Include="Models\Clases.cs" />
-    <Compile Include="Models\ListaFinal.cs" />
+    <Compile Include="Models\Alumno.cs" />
+    <Compile Include="Models\Asignatura.cs" />
     <Compile Include="Models\Profesores.cs" />
-    <Compile Include="Models\Views\View_Alumnos.cs" />
-    <Compile Include="Models\Views\View_Clases.cs" />
-    <Compile Include="Models\Views\View_Profesores.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -191,11 +188,13 @@
     <Content Include="Views\Register\RegistroAlumno.cshtml" />
     <Content Include="Views\Register\RegistroProfesor.cshtml" />
     <Content Include="Views\Register\RegistroAsignatura.cshtml" />
-    <Content Include="Views\Register\RegistrarClase.cshtml" />
-    <Content Include="Views\Lists\listarClase.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\Images\" />
+    <Folder Include="Data\" />
+    <Folder Include="Views\CRUD\" />
+    <Folder Include="Views\Update\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

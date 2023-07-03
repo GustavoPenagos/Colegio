@@ -1,22 +1,60 @@
-﻿using Colegio.Models;
+﻿using Antlr.Runtime;
+using Colegio.Models;
+using Microsoft.Ajax.Utilities;
+using Microsoft.SqlServer.Server;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace Colegio.Controllers
 {
     public class RegisterController : Controller
     {
-       public async Task<dynamic> RegistroAlumno()
+       public async Task<dynamic> RegistroAlumno(string alumno = null)
         {
             try
             {
-                await Asignaturas("A");
+                if (alumno == null)
+                {
+                    await Asignaturas("A");
+                    return View();
+                }
+
+                List<Alumno> json = JsonConvert.DeserializeObject<List<Alumno>>(alumno);
+                string asignatura = await Asignaturas("X");
+                List<Asignatura> jsonAsg = JsonConvert.DeserializeObject<List<Asignatura>>(asignatura);
+
+                //
+                List<Alumno> alumnos = new List<Alumno>();
+                List<Asignatura> asignaturas = new List<Asignatura>();
+                var lisAsg = await Asignaturas("U");
+                List<Asignatura> asgLis = JsonConvert.DeserializeObject<List<Asignatura>>(lisAsg);
+                foreach (var alm in json)
+                {
+                    foreach (var item in jsonAsg)
+                    {
+                        if (alm.Asignatura == null)
+                        {
+                            alm.Asignatura = item.Nombre;
+                        }
+                        if (item.Codigo.Equals(alm.Asignatura))
+                        {
+                            asignaturas.Add(item);
+                        }
+                    }
+                    alumnos.Add(alm);
+                }
+                //
+                ViewBag.Alumno = alumnos;
+                ViewBag.Datos = asgLis;
+                ViewBag.Opciones = asignaturas;
 
                 return View();
             }
@@ -51,37 +89,40 @@ namespace Colegio.Controllers
             return View();
         }
 
-        public async Task<dynamic> InsertAlumno(string identificacion, string nombre, string apellido, string edad, string direccion, string telefono)
+        public async Task<dynamic> InsertAlumno(string identificacion, string nombre, string apellido, string edad, string direccion, string telefono, string asignatura, string calificacion = null)
         {
             try
             {
-                Alumnos alumno = new Alumnos();
-
-                alumno.Identificacion = identificacion;
+                Alumno alumno = new Alumno();
+                alumno.Id_Alumno = identificacion;
                 alumno.Nombre = nombre;
                 alumno.Apellido = apellido;
-                alumno.Edad = Convert.ToInt32(edad);
+                alumno.Edad = edad;
                 alumno.Direccion = direccion;
                 alumno.Telefono = telefono;
+                alumno.Asignatura= asignatura;
+                alumno.Calificacion = calificacion == null ? "" : calificacion;
 
-                var jsonAlumno = new StringContent(JsonConvert.SerializeObject(alumno), Encoding.UTF8, "application/json");
 
-
-                HttpClient client = new HttpClient();
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "RigistroAlumno";
-                HttpResponseMessage httpResponse = await client.PostAsync(apiCrud, jsonAlumno);
-                if (httpResponse.IsSuccessStatusCode)
+                if(await ValidarAlumno(alumno))
                 {
-                    TempData["AlertMessage"] = "¡Datos guardados correctamente!";
-                    TempData["AlertType"] = "success";
-                    return RedirectToAction("RegistroAlumno", "Register");
+                    var jsonAlumno = new StringContent(JsonConvert.SerializeObject(alumno), Encoding.UTF8, "application/json");
+
+                    HttpClient client = new HttpClient();
+                    string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/registro/alumnos";
+                    HttpResponseMessage httpResponse = await client.PostAsync(apiCrud, jsonAlumno);
+                    if (httpResponse.IsSuccessStatusCode)
+                    {
+                        TempData["AlertMessage"] = "¡Datos guardados correctamente!";
+                        TempData["AlertType"] = "success";
+                    }
+                    else
+                    {
+                        TempData["AlertMessage"] = "¡Datos no guardados!";
+                        TempData["AlertType"] = "error";
+                    }
                 }
-                else
-                {
-                    TempData["AlertMessage"] = "¡Datos no guardados!";
-                    TempData["AlertType"] = "success";
-                    return RedirectToAction("RegistroAlumno", "Register");
-                }
+                return RedirectToAction("RegistroAlumno", "Register");
             }
             catch(Exception ex)
             {
@@ -89,26 +130,23 @@ namespace Colegio.Controllers
             }
         }
 
-        public async Task<dynamic> InsertProfesor(string identificacion, string nombre, string apellido, string edad, string direccion, string telefono, string opciones)
+        public async Task<dynamic> InsertProfesor(string identificacion, string nombre, string apellido, string edad, string direccion, string telefono, string asignatura)
         {
             try
             {
                 Profesores profesores = new Profesores();
-
-                profesores.Identificacion = identificacion;
+                profesores.Id_Profesor = identificacion;
                 profesores.Nombre = nombre;
                 profesores.Apellido = apellido;
-                profesores.Edad = Convert.ToInt32(edad);
+                profesores.Edad = edad;
                 profesores.Direccion = direccion;
                 profesores.Telefono = telefono;
-                profesores.Cod_Asignatura = Convert.ToInt32(opciones);
-                
+                profesores.Asignatura = asignatura;
 
                 var jsonProfesor = new StringContent(JsonConvert.SerializeObject(profesores), Encoding.UTF8, "application/json");
 
-
                 HttpClient client = new HttpClient();
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "RigistroProfesor";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/registro/profesores";
                 HttpResponseMessage httpResponse = await client.PostAsync(apiCrud, jsonProfesor);
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -133,16 +171,16 @@ namespace Colegio.Controllers
         {
             try
             {
-                Asignaturas asignatura = new Asignaturas();
+                Asignatura asignatura = new Asignatura();
 
-                asignatura.Codigo = Convert.ToInt32(codigo);
+                asignatura.Codigo = codigo;
                 asignatura.Nombre = nombre;
 
                 var jsonAsignatura = new StringContent(JsonConvert.SerializeObject(asignatura), Encoding.UTF8, "application/json");
 
 
                 HttpClient client = new HttpClient();
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "RigistroAsignatura";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/registro/asignaturas";
                 HttpResponseMessage httpResponse = await client.PostAsync(apiCrud, jsonAsignatura);
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -163,30 +201,64 @@ namespace Colegio.Controllers
             }
         }
 
-        public async Task<dynamic> InsertClase(string Id_Alumno, string Id_Profesor)
+        #region Obtener datos de tablas
+        /// <summary>
+        /// Metodo para obtener datos
+        /// </summary>
+        /// <param name="controller"></param>
+        /// <returns></returns>
+
+        public async Task<dynamic> Asignaturas(string controller)
         {
             try
             {
-                Clases clases = new Clases();
-                clases.Id_Alumno = Id_Alumno;
-                clases.Id_Profesor = Id_Profesor;
+                var dataAsinatura = await new HomeController().ObtenerAsignauraAsync();
 
-                var jsonClases = new StringContent(JsonConvert.SerializeObject(clases), Encoding.UTF8, "application/json");
-
-                HttpClient client = new HttpClient();
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "RegistroClases";
-                HttpResponseMessage httpResponse = await client.PostAsync(apiCrud, jsonClases);
-                if (httpResponse.IsSuccessStatusCode)
+                switch (controller)
                 {
-                    TempData["AlertMessage"] = "¡Datos guardados correctamente!";
-                    TempData["AlertType"] = "success";
-                    return RedirectToAction("RegistrarClase", "Register");
+                    case "A":
+                        ViewBag.Opciones = dataAsinatura;
+                        return View("RegistroAlumno");
+                    case "U":
+                        return JsonConvert.SerializeObject(dataAsinatura);
+                    case "X":
+                        var jsonAsg = JsonConvert.SerializeObject(dataAsinatura);
+                        return jsonAsg;
+                    default:
+                        return RedirectToAction("RegistroProfesor", "Register");
+                }
+            }
+            catch (Exception ex)
+            {
+                return View("Error", ex.Message);
+            }
+        }
+
+
+        public async Task<dynamic> ValidarAlumno(Alumno alumno)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(await new ListsController().Buscar(alumno.Id_Alumno, alumno.Asignatura, "Alumno", "registro"));
+                List<Alumno> dJson = JsonConvert.DeserializeObject<List<Alumno>>(json);
+                //
+
+                //
+                if (dJson != null)
+                {
+                    foreach (var item in dJson)
+                    {
+                        if ((alumno.Id_Alumno.Equals(item.Id_Alumno)) && (alumno.Asignatura.Equals(item.Asignatura)))
+                        {
+                            return false;
+                        }
+                        
+                    }
+                    return true;
                 }
                 else
                 {
-                    TempData["AlertMessage"] = "¡Datos no guardados!";
-                    TempData["AlertType"] = "success";
-                    return RedirectToAction("RegistrarClase", "Register");
+                    return false;
                 }
             }
             catch (Exception ex)
@@ -195,30 +267,6 @@ namespace Colegio.Controllers
             }
         }
 
-        public async Task<dynamic> Asignaturas(string controller)
-        {
-            try
-            {
-                List<Asignaturas> opciones = new List<Asignaturas>();
-                var dataAsinatura = await new HomeController().ObtenerAsignauraAsync();
-                foreach (var item in dataAsinatura)
-                {
-                    opciones.Add(item);
-                }
-                ViewBag.Opciones = opciones;
-                if (controller.Equals("A", StringComparison.OrdinalIgnoreCase))
-                {
-                    return View("RegistroAlumno");
-                }
-                else
-                {
-                    return View("RegistroProfesor");
-                }                
-            }
-            catch (Exception ex)
-            {
-                return View("Error", ex.Message);
-            }
-        }
+        #endregion
     }
 }

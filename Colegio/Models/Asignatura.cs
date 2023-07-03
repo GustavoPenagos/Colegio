@@ -5,9 +5,9 @@ using System.Web;
 
 namespace Colegio.Models
 {
-    public class Asignaturas
+    public class Asignatura
     {
-        public int Codigo { get; set; }
+        public string Codigo { get; set; }
         public string Nombre { get; set; }
     }
 }

@@ -24,7 +24,7 @@
                 <tr>
                     <td>Identificacion:</td>
                     <td>
-                        <input type="text" id="identificacion" name="identificacion" placeholder="Identificacion" />
+                        <input type="text" id="identificacion" name="identificacion" placeholder="Identificacion" required />
 
                     </td>
                 </tr>
@@ -61,10 +61,10 @@
                 <tr>
                     <td>Asignatura:</td>
                     <td>
-                        <select name="opciones" id="opciones" required>
+                        <select name="asignatura" id="asignatura" required>
                             @foreach (var opt in ViewBag.Opciones)
                             {
-                                <option value="@opt.Codigo" id="cod_Asignatura">@opt.Nombre</option>
+                                <option value="@opt.Codigo" id="asignatura">@opt.Nombre</option>
                             }
                         </select>
                     </td>

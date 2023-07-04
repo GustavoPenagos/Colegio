@@ -7,7 +7,7 @@ namespace Colegio.Models
 {
     public class Asignatura
     {
-        public string Codigo { get; set; }
+        public string Id { get; set; }
         public string Nombre { get; set; }
     }
 }

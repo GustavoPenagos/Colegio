@@ -58,12 +58,12 @@ namespace Colegio.Controllers
                     foreach (DataRow row in data.Rows)
                     {
                         Asignatura asignatura = new Asignatura();
-                        asignatura.Codigo = row["Codigo"].ToString();
+                        asignatura.Id = row["Id"].ToString();
                         asignatura.Nombre = row["Nombre"].ToString();
                         asignaturasList.Add(asignatura);
                     }
-                    
-                    return asignaturasList;                    
+
+                    return asignaturasList;
                 }
                 else
                 {

@@ -7,19 +7,52 @@
 
 <br />
 <div>
+    <form action="/Lists/Buscar" method="post">
+        <table class="table">
+            <thead>
+                <tr>
+                    <td>
+                        <center><label>Buscar</label></center>
+                    </td>
+                    <td>
+                        <input type="number" id="buscar" name="buscar" value="Alumno" placeholder="Buscar Codigo" required />
+                        <input type="hidden" id="name" name="name" value="Asignatura" readonly />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2"><button type="submit" class="btn btn-primary" style="width:30%; ">Buscar</button></td>
+                </tr>
+            </thead>
+        </table>
+    </form>
+</div>
+<br />
+<div>
     <table class="table table-striped-columns">
         <thead>
             <tr>
                 <td>Codigo<br />asignatura</td>
                 <td>Nombre<br />asignatura</td>
+                <td colspan="2"><center>Acciones</center></td>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Codigo</td>
+                    <td>@item.Id</td>
                     <td>@item.Nombre</td>
+                    <td>
+                        <a href="@Url.Action("Editar", "Crud", new { id = item.Id, asg = item.Nombre ,name = "Asignatura"})">
+                            <center><img src="~/Content/Images/pencil-fill.svg" class="carousel-control-prev-icon" alt="Imagen" /></center>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="@Url.Action("Eliminar", "Crud", new {id = item.Id, name = "Alumno"}) ">
+                            <center><img src="~/Content/Images/trash2-fill.svg" class="carousel-control-prev-icon" alt="Imagen" /></center>
+                        </a>
+                    </td>
                 </tr>
             }
         </tbody>

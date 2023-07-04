@@ -51,8 +51,18 @@ namespace Colegio.Controllers
         {
             try
             {
-                var dataProfesor = await ObtenerProfesorAsync();
-                return View(dataProfesor);
+                List<Profesores> data = (List<Profesores>)Session["Lista"];
+
+                if (data != null)
+                {
+                    Session.Clear();
+                    return View(data);
+                }
+                else
+                {
+                    var dataProfesor = await ObtenerProfesorAsync();
+                    return View(dataProfesor);
+                }
             }
             catch (Exception ex)
             {
@@ -64,8 +74,18 @@ namespace Colegio.Controllers
         {
             try
             {
-                var dataAsignatura = await ObtenerAsignaturaAsync();
-                return View(dataAsignatura);
+                List<Asignatura> data = (List<Asignatura>)Session["Lista"];
+
+                if (data != null)
+                {
+                    Session.Clear();
+                    return View(data);
+                }
+                else
+                {
+                    var dataAsignatura = await ObtenerAsignaturaAsync();
+                    return View(dataAsignatura);
+                }
             }
             catch (Exception ex)
             {
@@ -100,7 +120,7 @@ namespace Colegio.Controllers
                     foreach (DataRow row in data.Rows)
                     {
                         Alumno alumno = new Alumno();
-                        alumno.Id_Alumno = row["Id_Alumno"].ToString();
+                        alumno.Id = row["Id"].ToString();
                         alumno.Nombre = row["Nombre"].ToString();
                         alumno.Apellido = row["Apellido"].ToString();
                         alumno.Edad = row["Edad"].ToString();
@@ -152,21 +172,21 @@ namespace Colegio.Controllers
                     foreach (DataRow row in data.Rows)
                     {
                         Profesores profesor = new Profesores();
-                        profesor.Id_Profesor = row["Id_Profesor"].ToString();
+                        profesor.Id = row["Id"].ToString();
                         profesor.Nombre = row["Nombre"].ToString();
                         profesor.Apellido = row["Apellido"].ToString();
                         profesor.Edad = row["Edad"].ToString();
                         profesor.Direccion = row["Direccion"].ToString();
                         profesor.Telefono = row["Telefono"].ToString();
-
-                        var materia = await new HomeController().ObtenerAsignauraAsync();
-                        foreach (var item in materia)
-                        {
-                            if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
-                            {
-                                profesor.Asignatura = item.Nombre;
-                            }
-                        }
+                        profesor.Asignatura = row["Asignatura"].ToString();
+                        //var materia = await new HomeController().ObtenerAsignauraAsync();
+                        //foreach (var item in materia)
+                        //{
+                        //    if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
+                        //    {
+                        //        profesor.Asignatura = item.Nombre;
+                        //    }
+                        //}
 
                         profesorList.Add(profesor);
                     }
@@ -202,7 +222,7 @@ namespace Colegio.Controllers
                     foreach (DataRow row in data.Rows)
                     {
                         Asignatura asignatura = new Asignatura();
-                        asignatura.Codigo = row["Codigo"].ToString();
+                        asignatura.Id = row["Id"].ToString();
                         asignatura.Nombre = row["Nombre"].ToString();
 
                         AsignaturaList.Add(asignatura);
@@ -226,72 +246,130 @@ namespace Colegio.Controllers
             try
             {
                 List<Alumno> alumnosList = new List<Alumno>();
+                List<Profesores> profesorList = new List<Profesores>();
+                List<Asignatura> asignaturaList = new List<Asignatura>();
+
                 HttpClient client = new HttpClient();
                 string url = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/buscar" + "?Id=" + buscar + "&asg=" + asg + "&name=" + name;
-                string responseData = "";
 
                 HttpResponseMessage httpResponse = await client.GetAsync(url);
                 if (httpResponse.IsSuccessStatusCode)
                 {
                     string response = await httpResponse.Content.ReadAsStringAsync();
                     DataTable data = JsonConvert.DeserializeObject<DataTable>(response);
-
-                    foreach (DataRow row in data.Rows)
+                    switch (data.Rows[0].ItemArray.Length)
                     {
-                        Alumno alumno = new Alumno();
-                        alumno.Id_Alumno = row["Id_Alumno"].ToString();
-                        alumno.Nombre = row["Nombre"].ToString();
-                        alumno.Apellido = row["Apellido"].ToString();
-                        alumno.Edad = row["Edad"].ToString();
-                        alumno.Direccion = row["Direccion"].ToString();
-                        alumno.Telefono = row["Telefono"].ToString();
-
-                        if (accion != null)
-                        {
-                            switch (accion)
+                        case 2:
+                            foreach (DataRow row in data.Rows)
                             {
-                                case "registro":
-                                    alumno.Asignatura = row["Asignatura"].ToString();
-                                    break;
-                                case "Editar":
-                                    var materia = await new HomeController().ObtenerAsignauraAsync();
-                                    foreach (var item in materia)
-                                    {
-                                        if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
-                                        {
-                                            alumno.Asignatura = item.Codigo;
-                                        }
-                                    }
-                                    break;
+                                Asignatura asignatura = new Asignatura();
+                                asignatura.Id = row["Id"].ToString();
+                                asignatura.Nombre = row["Nombre"].ToString();
+
+                                asignaturaList.Add(asignatura);
                             }
-                        }
-                        else
-                        {
-                            var materia = await new HomeController().ObtenerAsignauraAsync();
-                            foreach (var item in materia)
+                            if (accion != null)
                             {
-                                if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
-                                {
-                                    alumno.Asignatura = item.Nombre;
-                                }
+                                return asignaturaList;
                             }
-                        }                      
+                            else
+                            {
+                                Session["Lista"] = asignaturaList;
+                                return RedirectToAction("ListaAsignatura", "Lists");
+                            }
+                        case 7:
+                            foreach (DataRow row in data.Rows)
+                            {
+                                Profesores profesor = new Profesores();
+                                profesor.Id = row["Id"].ToString();
+                                profesor.Nombre = row["Nombre"].ToString();
+                                profesor.Apellido = row["Apellido"].ToString();
+                                profesor.Edad = row["Edad"].ToString();
+                                profesor.Direccion = row["Direccion"].ToString();
+                                profesor.Telefono = row["Telefono"].ToString();
+                                profesor.Asignatura = row["Asignatura"].ToString();
 
-                        alumno.Calificacion = row["Calificacion"].ToString();
+                                profesorList.Add(profesor);
+                            }
+                            if (accion != null)
+                            {
+                                return profesorList;
+                            }
+                            else
+                            {
+                                Session["Lista"] = profesorList;
+                                return RedirectToAction("ListaProfesores", "Lists");
+                            }
+                        case 8:
+                            foreach (DataRow row in data.Rows)
+                            {
+                                Alumno alumno = new Alumno();
+                                alumno.Id = row["Id"].ToString();
+                                alumno.Nombre = row["Nombre"].ToString();
+                                alumno.Apellido = row["Apellido"].ToString();
+                                alumno.Edad = row["Edad"].ToString();
+                                alumno.Direccion = row["Direccion"].ToString();
+                                alumno.Telefono = row["Telefono"].ToString();
+                                alumno.Asignatura = row["Asignatura"].ToString();
+                                alumno.Calificacion = row["Calificacion"].ToString();
 
-                        alumnosList.Add(alumno);
+                                alumnosList.Add(alumno);
+                            }
+                            if (accion != null)
+                            {
+                                return alumnosList;
+                            }
+                            else
+                            {
+                                Session["Lista"] = alumnosList;
+                                return RedirectToAction("ListaAlumnos", "Lists");
+                            }
+                        
+                        
                     }
-                    if (accion != null)
-                    {
-                        return alumnosList;
-                    }
-                    else
-                    {
-                        Session["Lista"] = alumnosList;
-                        return RedirectToAction("ListaAlumnos", "Lists");
-                    }
+
+                    //if (accion != null)
+                    //{
+                    //    switch (accion)
+                    //    {
+                    //        case "registro":
+                    //            alumno.Asignatura = row["Asignatura"].ToString();
+                    //            break;
+                    //        case "Editar":
+                    //            var materia = await new HomeController().ObtenerAsignauraAsync();
+                    //            foreach (var item in materia)
+                    //            {
+                    //                if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
+                    //                {
+                    //                    alumno.Asignatura = item.Codigo;
+                    //                }
+                    //            }
+                    //            break;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    var materia = await new HomeController().ObtenerAsignauraAsync();
+                    //    foreach (var item in materia)
+                    //    {
+                    //        if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
+                    //        {
+                    //            alumno.Asignatura = item.Nombre;
+                    //        }
+                    //    }
+                    //}                      
+
+                    //alumno.Calificacion = row["Calificacion"].ToString();
+
                 }
-                return responseData;
+                if(alumnosList != null)
+                {
+                    return RedirectToAction("ListaAlumnos", "Lists");
+                }
+                else
+                {
+                    return RedirectToAction("ListaProfesores", "Lists");
+                }
             }
             catch (Exception ex)
             {

@@ -23,11 +23,11 @@ namespace Colegio.Controllers
 
         public async Task<dynamic> Editar(string id, string asg, string name)
         {
-            var Alumno = await new ListsController().Buscar(id, asg, name, "Editar");
+            var result = await new ListsController().Buscar(id, asg, name, "Editar");
 
-            string json = JsonConvert.SerializeObject(Alumno);
+            string json = JsonConvert.SerializeObject(result);
 
-            return RedirectToAction("RegistroAlumno", "Register", new { alumno = json});
+            return RedirectToAction("RegistroAsignatura", "Register", new { asignatura = json});
         }
 
         public async Task<dynamic> ActualizarAlumno(string identificacion, string nombre, string apellido, string edad, string direccion, string telefono, string asignatura, string calificacion = null)
@@ -35,7 +35,7 @@ namespace Colegio.Controllers
             try
             {
                 Alumno alumno = new Alumno();
-                alumno.Id_Alumno = identificacion;
+                alumno.Id = identificacion;
                 alumno.Nombre = nombre;
                 alumno.Apellido = apellido;
                 alumno.Edad = edad;

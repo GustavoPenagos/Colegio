@@ -44,7 +44,7 @@ namespace Colegio.Controllers
                         {
                             alm.Asignatura = item.Nombre;
                         }
-                        if (item.Codigo.Equals(alm.Asignatura))
+                        if (item.Id.Equals(alm.Asignatura))
                         {
                             asignaturas.Add(item);
                         }
@@ -78,10 +78,31 @@ namespace Colegio.Controllers
             }
         }
 
-        public ActionResult RegistroAsignatura()
+        public ActionResult RegistroAsignatura(string asignatura = null)
         {
+            try
+            {
+                if (asignatura == null)
+                {
+                    return View();
+                }
 
-            return View();
+                List<Asignatura> json = JsonConvert.DeserializeObject<List<Asignatura>>(asignatura);
+                List<Asignatura> asgList = new List<Asignatura>();
+                
+                foreach (var asg in json)
+                {
+                    asgList.Add(asg);
+                }
+                //
+               ViewBag.Asignatura = asgList;
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return View("Error", ex.Message);
+            }
         }
 
         public ActionResult RegistrarClase()
@@ -94,7 +115,7 @@ namespace Colegio.Controllers
             try
             {
                 Alumno alumno = new Alumno();
-                alumno.Id_Alumno = identificacion;
+                alumno.Id = identificacion;
                 alumno.Nombre = nombre;
                 alumno.Apellido = apellido;
                 alumno.Edad = edad;
@@ -135,7 +156,7 @@ namespace Colegio.Controllers
             try
             {
                 Profesores profesores = new Profesores();
-                profesores.Id_Profesor = identificacion;
+                profesores.Id = identificacion;
                 profesores.Nombre = nombre;
                 profesores.Apellido = apellido;
                 profesores.Edad = edad;
@@ -173,7 +194,7 @@ namespace Colegio.Controllers
             {
                 Asignatura asignatura = new Asignatura();
 
-                asignatura.Codigo = codigo;
+                asignatura.Id = codigo;
                 asignatura.Nombre = nombre;
 
                 var jsonAsignatura = new StringContent(JsonConvert.SerializeObject(asignatura), Encoding.UTF8, "application/json");
@@ -219,6 +240,9 @@ namespace Colegio.Controllers
                     case "A":
                         ViewBag.Opciones = dataAsinatura;
                         return View("RegistroAlumno");
+                    case "P":
+                        ViewBag.Opciones = dataAsinatura;
+                        return View("RegistroProfesor");
                     case "U":
                         return JsonConvert.SerializeObject(dataAsinatura);
                     case "X":
@@ -235,11 +259,82 @@ namespace Colegio.Controllers
         }
 
 
-        public async Task<dynamic> ValidarAlumno(Alumno alumno)
+        public async Task<dynamic> ValidarAlumno(Alumno alumno=null, Profesores profesor=null)
         {
             try
             {
-                var json = JsonConvert.SerializeObject(await new ListsController().Buscar(alumno.Id_Alumno, alumno.Asignatura, "Alumno", "registro"));
+                if(alumno != null)
+                {
+                    try 
+                    {
+                        var json = JsonConvert.SerializeObject(await new ListsController().Buscar(alumno.Id, alumno.Asignatura, "Alumno", "registro"));
+                        List<Alumno> dJson = JsonConvert.DeserializeObject<List<Alumno>>(json);
+
+                        if (dJson != null)
+                        {
+                            foreach (var item in dJson)
+                            {
+                                if ((alumno.Id.Equals(item.Id)) && (alumno.Asignatura.Equals(item.Asignatura)))
+                                {
+                                    return false;
+                                }
+
+                            }
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    } catch (Exception ex)
+                    {
+                        return View("Error", ex.Message);
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        var json = JsonConvert.SerializeObject(await new ListsController().Buscar(profesor.Id, profesor.Asignatura, "Profesor", "registro"));
+                        List<Profesores> dJson = JsonConvert.DeserializeObject<List<Profesores>>(json);
+                        //
+
+                        //
+                        if (dJson != null)
+                        {
+                            foreach (var item in dJson)
+                            {
+                                if ((profesor.Id.Equals(item.Id)) && (profesor.Asignatura.Equals(item.Asignatura)))
+                                {
+                                    return false;
+                                }
+
+                            }
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        return View("Error", ex.Message);
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                return View("Error");
+            }
+        }
+
+        public async Task<dynamic> ValidarProfesor(Profesores profesor)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(await new ListsController().Buscar(profesor.Id, profesor.Asignatura, "Profesor", "registro"));
                 List<Alumno> dJson = JsonConvert.DeserializeObject<List<Alumno>>(json);
                 //
 
@@ -248,11 +343,11 @@ namespace Colegio.Controllers
                 {
                     foreach (var item in dJson)
                     {
-                        if ((alumno.Id_Alumno.Equals(item.Id_Alumno)) && (alumno.Asignatura.Equals(item.Asignatura)))
+                        if ((profesor.Id.Equals(item.Id)) && (profesor.Asignatura.Equals(item.Asignatura)))
                         {
                             return false;
                         }
-                        
+
                     }
                     return true;
                 }
@@ -266,6 +361,7 @@ namespace Colegio.Controllers
                 return View("Error");
             }
         }
+
 
         #endregion
     }

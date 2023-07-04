@@ -10,8 +10,6 @@
 
 @if (ViewBag.Alumno == null)
 {
-
-
 <div class="container">
         <form action="/Register/InsertAlumno" method="post">
             <table class="table table-striped-columns">
@@ -69,11 +67,8 @@
                             <select name="asignatura" id="asignatura" required>
                                 @foreach (var opt in ViewBag.Opciones)
                                 {
-                                    <option value="@opt.Codigo" id="asignatura">@opt.Nombre</option>
+                                    <option value="@opt.Id" id="asignatura">@opt.Nombre</option>
                                 }
-                                
-
-
                             </select>
                         </td>
                     </tr>
@@ -125,7 +120,7 @@ else
                         <tr>
                             <td>Identificacion:</td>
                             <td>
-                                <input type="number" id="identificacion" name="identificacion" placeholder="Identificacion" value="@item.Id_Alumno" readonly />
+                                <input type="number" id="identificacion" name="identificacion" placeholder="Identificacion" value="@item.Id" readonly />
 
                             </td>
                         </tr>
@@ -167,14 +162,14 @@ else
                                     {
                                         foreach (var dato in ViewBag.Datos)
                                         {
-                                            <option value="@dato.Codigo" id="asignatura">@dato.Nombre</option>
+                                            <option value="@dato.Id" id="asignatura">@dato.Nombre</option>
                                         }
                                     }
                                     else
                                     {
                                         foreach (var opt in ViewBag.Opciones)
                                         {
-                                            <option value="@opt.Codigo" id="asignatura">@opt.Nombre</option>
+                                            <option value="@opt.Id" id="asignatura">@opt.Nombre</option>
                                         }
                                     }
                                 </select>

@@ -6,7 +6,29 @@
     <h2 id="title">@ViewBag.Title.</h2>
     <h3>@ViewBag.Message</h3>
 
-   <br />
+    <br />
+    <div>
+        <form action="/Lists/Buscar" method="post">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>
+                            <center><label>Buscar</label></center>
+                        </td>
+                        <td>
+                            <input type="number" id="buscar" name="buscar" value="Alumno" placeholder="Buscar Identificacion" required />
+                            <input type="hidden" id="name" name="name" value="Profesor" readonly />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="2"><button type="submit" class="btn btn-primary" style="width:30%; ">Buscar</button></td>
+                    </tr>
+                </thead>
+            </table>
+        </form>
+    </div>
+    <br />
     <div>
         <table class="table table-striped-columns">
             <thead>
@@ -25,12 +47,22 @@
                 {
                     <tr>
                         <td>2023</td>
-                        <td>@item.Id_Profesor</td>
+                        <td>@item.Id</td>
                         <td>@item.Nombre @item.Apellido</td>
                         <td>@item.Edad</td>
                         <td>@item.Direccion</td>
                         <td>@item.Telefono</td>
                         <td>@item.Asignatura</td>
+                        <td>
+                            <a href="@Url.Action("Editar", "Crud", new { id = item.Id, asg = item.Asignatura ,name = "Alumno"})">
+                                <img src="~/Content/Images/pencil-fill.svg" class="card-img-bottom" alt="Imagen" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Eliminar", "Crud", new {id = item.Id, name = "Alumno"}) ">
+                                <img src="~/Content/Images/trash2-fill.svg" class="card-img-bottom" alt="Imagen" />
+                            </a>
+                        </td>
                     </tr>
                 }
             </tbody>

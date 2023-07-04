@@ -48,7 +48,7 @@
                 {
                     <tr>
                         <td>2023</td>
-                        <td>@item.Id_Alumno</td>
+                        <td>@item.Id</td>
                         <td>@item.Nombre @item.Apellido</td>
                         <td>@item.Edad</td>
                         <td>@item.Direccion</td>
@@ -56,12 +56,12 @@
                         <td>@item.Asignatura</td>
                         <td>@item.Calificacion</td>
                         <td>
-                            <a href="@Url.Action("Editar", "Crud", new { id = item.Id_Alumno, asg = item.Asignatura ,name = "Alumno"})">
+                            <a href="@Url.Action("Editar", "Crud", new { id = item.Id, asg = item.Asignatura ,name = "Alumno"})">
                                 <img src="~/Content/Images/pencil-fill.svg" class="card-img-bottom" alt="Imagen" />
                             </a>
                         </td>
                         <td>
-                            <a href="@Url.Action("EliminarAlumno", "Crud", new {id = item.Id_Alumno, name = "Alumno"}) ">
+                            <a href="@Url.Action("Eliminar", "Crud", new {id = item.Id, name = "Alumno"}) ">
                                 <img src="~/Content/Images/trash2-fill.svg" class="card-img-bottom" alt="Imagen" />
                             </a>
                         </td>

@@ -64,7 +64,7 @@
                         <select name="asignatura" id="asignatura" required>
                             @foreach (var opt in ViewBag.Opciones)
                             {
-                                <option value="@opt.Codigo" id="asignatura">@opt.Nombre</option>
+                                <option value="@opt.Id" id="asignatura">@opt.Nombre</option>
                             }
                         </select>
                     </td>

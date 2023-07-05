@@ -127,7 +127,7 @@
     </Compile>
     <Compile Include="Models\Alumno.cs" />
     <Compile Include="Models\Asignatura.cs" />
-    <Compile Include="Models\Profesores.cs" />
+    <Compile Include="Models\Profesor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

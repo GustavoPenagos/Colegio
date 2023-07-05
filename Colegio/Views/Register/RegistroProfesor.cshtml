@@ -7,87 +7,193 @@
 
 <br />
 
-<div class="container">
-    <form action="/Register/InsertProfesor" method="post">
-        <table class="table table-striped-columns">
-            <thead>
-                <tr>
-                    <td>
-                        <p>Ingresar los datos del profesor</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Identificacion:</td>
-                    <td>
-                        <input type="text" id="identificacion" name="identificacion" placeholder="Identificacion" required />
+@if (ViewBag.Profesor == null)
+{
+    <div class="container">
+        <form action="/Register/InsertProfesor" method="post">
+            <table class="table table-striped-columns">
+                <thead>
+                    <tr>
+                        <td>
+                            <p>Ingresar los datos del profesor</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Identificacion:</td>
+                        <td>
+                            <input type="text" id="identificacion" name="identificacion" placeholder="Identificacion" required />
 
-                    </td>
-                </tr>
-                <tr>
-                    <td>Nombre:</td>
-                    <td>
-                        <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Apellidos:</td>
-                    <td>
-                        <input type="text" id="apellido" name="apellido" placeholder="Apellido" required>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Edad:</td>
-                    <td>
-                        <input type="text" id="edad" name="edad" placeholder="Edad" required>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Direccion:</td>
-                    <td>
-                        <input type="text" id="direccion" name="direccion" placeholder="Direccion">
-                    </td>
-                </tr>
-                <tr>
-                    <td>Telefono:</td>
-                    <td>
-                        <input type="text" id="telefono" name="telefono" placeholder="Telefono">
-                    </td>
-                </tr>
-                <tr>
-                    <td>Asignatura:</td>
-                    <td>
-                        <select name="asignatura" id="asignatura" required>
-                            @foreach (var opt in ViewBag.Opciones)
-                            {
-                                <option value="@opt.Id" id="asignatura">@opt.Nombre</option>
-                            }
-                        </select>
-                    </td>
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="2">
-                        <center><button type="submit" class="btn btn-primary" style="width:50%; ">Guardar</button></center>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
-    </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Nombre:</td>
+                        <td>
+                            <input type="text" id="nombre" name="nombre" placeholder="Nombre" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Apellidos:</td>
+                        <td>
+                            <input type="text" id="apellido" name="apellido" placeholder="Apellido" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Edad:</td>
+                        <td>
+                            <input type="text" id="edad" name="edad" placeholder="Edad" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Direccion:</td>
+                        <td>
+                            <input type="text" id="direccion" name="direccion" placeholder="Direccion">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Telefono:</td>
+                        <td>
+                            <input type="text" id="telefono" name="telefono" placeholder="Telefono">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Asignatura:</td>
+                        <td>
+                            <select name="asignatura" id="asignatura" required>
+                                @foreach (var opt in ViewBag.Opciones)
+                                {
+                                    <option value="@opt.Id" id="asignatura">@opt.Nombre</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2">
+                            <center><button type="submit" class="btn btn-primary" style="width:50%; ">Guardar</button></center>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </form>
 
-</div>
-<div>
-    @if (TempData.ContainsKey("AlertMessage"))
+    </div>
+    <div>
+        @if (TempData.ContainsKey("AlertMessage"))
+        {
+            <div class="alert alert-@(TempData["AlertType"])">
+                @TempData["AlertMessage"]
+            </div>
+        }
+
+
+    </div>
+}
+else
+{
+    foreach (var item in ViewBag.Profesor)
     {
-        <div class="alert alert-@(TempData["AlertType"])">
-            @TempData["AlertMessage"]
+        <div class="container">
+            <form action="/Crud/ActualizarProfesor" method="post">
+                <table class="table table-striped-columns">
+                    <thead>
+                        <tr>
+                            <td>
+                                <p>Ingresar los datos del profesor</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Identificacion:</td>
+                            <td>
+                                <input type="text" id="id" name="id" value="@item.Id" readonly />
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Nombre:</td>
+                            <td>
+                                <input type="text" id="nombre" name="nombre" placeholder="Nombre" value="@item.Nombre" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Apellidos:</td>
+                            <td>
+                                <input type="text" id="apellido" name="apellido" placeholder="Apellido" value="@item.Apellido" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Edad:</td>
+                            <td>
+                                <input type="text" id="edad" name="edad" placeholder="Edad" value="@item.Edad" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Direccion:</td>
+                            <td>
+                                <input type="text" id="direccion" name="direccion" value="@item.Direccion" placeholder="Direccion">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Telefono:</td>
+                            <td>
+                                <input type="text" id="telefono" name="telefono" value="@item.Telefono" placeholder="Telefono">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                Asignatura:
+                                <br />
+                                <br />
+                                Actual:
+                            </td>
+                            <td>
+                                <select name="asignatura" id="asignatura">
+
+                                    @foreach (var dato in ViewBag.Datos)
+                                    {
+                                        <option value="@dato.Id" id="asignatura">@dato.Nombre</option>
+                                    }
+                                </select>
+                                <br /><br />
+                                @foreach (var ito in ViewBag.Opciones)
+                                {
+                                    <input type="text" value="@ito.Nombre" readonly />
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">
+                                <center><button type="submit" class="btn btn-primary" style="width:50%; ">Actualizar</button></center>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </form>
+
+        </div>
+        <div>
+            @if (TempData.ContainsKey("AlertMessage"))
+            {
+                <div class="alert alert-@(TempData["AlertType"])">
+                    @TempData["AlertMessage"]
+                </div>
+            }
+
+
         </div>
     }
-</div>
+}
 
 

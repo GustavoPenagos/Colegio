@@ -28,14 +28,16 @@ namespace Colegio.Controllers
                 }
 
                 List<Alumno> json = JsonConvert.DeserializeObject<List<Alumno>>(alumno);
-                string asignatura = await Asignaturas("X");
+
+                string asignatura = await Asignaturas("Registro");
                 List<Asignatura> jsonAsg = JsonConvert.DeserializeObject<List<Asignatura>>(asignatura);
 
-                //
+
                 List<Alumno> alumnos = new List<Alumno>();
                 List<Asignatura> asignaturas = new List<Asignatura>();
-                var lisAsg = await Asignaturas("U");
+                var lisAsg = await Asignaturas("TodasAsignaturas");
                 List<Asignatura> asgLis = JsonConvert.DeserializeObject<List<Asignatura>>(lisAsg);
+                
                 foreach (var alm in json)
                 {
                     foreach (var item in jsonAsg)
@@ -64,11 +66,46 @@ namespace Colegio.Controllers
             }
         }
 
-        public async Task<dynamic> RegistroProfesor()
+        public async Task<dynamic> RegistroProfesor(string profesor)
         {
             try
             {
-                await Asignaturas("P");
+                if (profesor == null)
+                {
+                    await Asignaturas("P");
+                    return View();
+                }
+
+                List<Profesor> json = JsonConvert.DeserializeObject<List<Profesor>>(profesor);
+
+                string asignatura = await Asignaturas("Registro");
+                List<Asignatura> jsonAsg = JsonConvert.DeserializeObject<List<Asignatura>>(asignatura);
+
+
+                List<Profesor> profesores = new List<Profesor>();
+                List<Asignatura> asignaturas = new List<Asignatura>();
+                var lisAsg = await Asignaturas("TodasAsignaturas");
+                List<Asignatura> asgLis = JsonConvert.DeserializeObject<List<Asignatura>>(lisAsg);
+
+                foreach (var prf in json)
+                {
+                    foreach (var item in jsonAsg)
+                    {
+                        if (prf.Asignatura == null)
+                        {
+                            prf.Asignatura = item.Nombre;
+                        }
+                        if (item.Id.Equals(prf.Asignatura))
+                        {
+                            asignaturas.Add(item);
+                        }
+                    }
+                    profesores.Add(prf);
+                }
+                //
+                ViewBag.Profesor = profesores;
+                ViewBag.Datos = asgLis;
+                ViewBag.Opciones = asignaturas;
 
                 return View();
             }
@@ -82,19 +119,19 @@ namespace Colegio.Controllers
         {
             try
             {
+                List<Asignatura> asgList = new List<Asignatura>();
                 if (asignatura == null)
                 {
                     return View();
                 }
 
                 List<Asignatura> json = JsonConvert.DeserializeObject<List<Asignatura>>(asignatura);
-                List<Asignatura> asgList = new List<Asignatura>();
                 
                 foreach (var asg in json)
                 {
                     asgList.Add(asg);
                 }
-                //
+                
                ViewBag.Asignatura = asgList;
 
                 return View();
@@ -130,7 +167,7 @@ namespace Colegio.Controllers
                     var jsonAlumno = new StringContent(JsonConvert.SerializeObject(alumno), Encoding.UTF8, "application/json");
 
                     HttpClient client = new HttpClient();
-                    string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/registro/alumnos";
+                    string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/registro";
                     HttpResponseMessage httpResponse = await client.PostAsync(apiCrud, jsonAlumno);
                     if (httpResponse.IsSuccessStatusCode)
                     {
@@ -155,7 +192,7 @@ namespace Colegio.Controllers
         {
             try
             {
-                Profesores profesores = new Profesores();
+                Profesor profesores = new Profesor();
                 profesores.Id = identificacion;
                 profesores.Nombre = nombre;
                 profesores.Apellido = apellido;
@@ -243,13 +280,13 @@ namespace Colegio.Controllers
                     case "P":
                         ViewBag.Opciones = dataAsinatura;
                         return View("RegistroProfesor");
-                    case "U":
+                    case "TodasAsignaturas":
                         return JsonConvert.SerializeObject(dataAsinatura);
-                    case "X":
+                    case "Registro":
                         var jsonAsg = JsonConvert.SerializeObject(dataAsinatura);
                         return jsonAsg;
                     default:
-                        return RedirectToAction("RegistroProfesor", "Register");
+                        return RedirectToAction("Index", "Home");
                 }
             }
             catch (Exception ex)
@@ -259,7 +296,7 @@ namespace Colegio.Controllers
         }
 
 
-        public async Task<dynamic> ValidarAlumno(Alumno alumno=null, Profesores profesor=null)
+        public async Task<dynamic> ValidarAlumno(Alumno alumno=null, Profesor profesor=null)
         {
             try
             {
@@ -296,7 +333,7 @@ namespace Colegio.Controllers
                     try
                     {
                         var json = JsonConvert.SerializeObject(await new ListsController().Buscar(profesor.Id, profesor.Asignatura, "Profesor", "registro"));
-                        List<Profesores> dJson = JsonConvert.DeserializeObject<List<Profesores>>(json);
+                        List<Profesor> dJson = JsonConvert.DeserializeObject<List<Profesor>>(json);
                         //
 
                         //
@@ -330,7 +367,7 @@ namespace Colegio.Controllers
             }
         }
 
-        public async Task<dynamic> ValidarProfesor(Profesores profesor)
+        public async Task<dynamic> ValidarProfesor(Profesor profesor)
         {
             try
             {

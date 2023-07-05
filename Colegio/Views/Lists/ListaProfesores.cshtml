@@ -17,7 +17,7 @@
                         </td>
                         <td>
                             <input type="number" id="buscar" name="buscar" value="Alumno" placeholder="Buscar Identificacion" required />
-                            <input type="hidden" id="name" name="name" value="Profesor" readonly />
+                            <input type="hidden" id="name" name="name" value="profesor" readonly />
                         </td>
                     </tr>
                     <tr>
@@ -54,12 +54,12 @@
                         <td>@item.Telefono</td>
                         <td>@item.Asignatura</td>
                         <td>
-                            <a href="@Url.Action("Editar", "Crud", new { id = item.Id, asg = item.Asignatura ,name = "Alumno"})">
+                            <a href="@Url.Action("Editar", "Crud", new { id = item.Id ,name = "profesor"})">
                                 <img src="~/Content/Images/pencil-fill.svg" class="card-img-bottom" alt="Imagen" />
                             </a>
                         </td>
                         <td>
-                            <a href="@Url.Action("Eliminar", "Crud", new {id = item.Id, name = "Alumno"}) ">
+                            <a href="@Url.Action("Eliminar", "Crud", new {id = item.Id, name = "profesor"}) ">
                                 <img src="~/Content/Images/trash2-fill.svg" class="card-img-bottom" alt="Imagen" />
                             </a>
                         </td>

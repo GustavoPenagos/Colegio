@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Colegio.Models
 {
-    public class Profesores
+    public class Profesor
     {
         public string Id { get; set; }
         public string Nombre { get; set; }

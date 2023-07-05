@@ -51,7 +51,7 @@ namespace Colegio.Controllers
         {
             try
             {
-                List<Profesores> data = (List<Profesores>)Session["Lista"];
+                List<Profesor> data = (List<Profesor>)Session["Lista"];
 
                 if (data != null)
                 {
@@ -104,53 +104,27 @@ namespace Colegio.Controllers
 
         public async Task<dynamic> ObtenerAlumnoAsync()
         {
-            List<Alumno> alumnosList = new List<Alumno>();
             try
             {
-
                 HttpClient client = new HttpClient();
 
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/lista/alumnos";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/listar" + "?name=alumno";
                 HttpResponseMessage ResponseAlumno = await client.GetAsync(apiCrud);
                 if (ResponseAlumno.IsSuccessStatusCode)
                 {
                     string response = await ResponseAlumno.Content.ReadAsStringAsync();
-                    DataTable data = JsonConvert.DeserializeObject<DataTable>(response);
-                    
-                    foreach (DataRow row in data.Rows)
-                    {
-                        Alumno alumno = new Alumno();
-                        alumno.Id = row["Id"].ToString();
-                        alumno.Nombre = row["Nombre"].ToString();
-                        alumno.Apellido = row["Apellido"].ToString();
-                        alumno.Edad = row["Edad"].ToString();
-                        alumno.Direccion = row["Direccion"].ToString();
-                        alumno.Telefono = row["Telefono"].ToString();
+                    List<Alumno> data = JsonConvert.DeserializeObject<List<Alumno>>(response);
 
-                        //var materia = await new HomeController().ObtenerAsignauraAsync();
-                        //foreach(var item in materia)
-                        //{
-                        //    if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
-                        //    {
-                        //        alumno.Asignatura = item.Nombre;
-                        //    }    
-                        //}
-                        alumno.Asignatura = row["Asignatura"].ToString();
-                        alumno.Calificacion = row["Calificacion"].ToString();
-
-                        alumnosList.Add(alumno);
-                    }
-                    return alumnosList;
+                    return data;
                 }
                 else
                 {
                     return View("Error");
                 }
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
-
-                return alumnosList = null;
+                return null;
             }
         }
 
@@ -158,40 +132,16 @@ namespace Colegio.Controllers
         {
             try
             {
-                List<Profesores> profesorList = new List<Profesores>();
-
                 HttpClient client = new HttpClient();
 
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/lista/profesores";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/listar" + "?name=profesor";
                 HttpResponseMessage ResponseAsignatura = await client.GetAsync(apiCrud);
                 if (ResponseAsignatura.IsSuccessStatusCode)
                 {
                     string response = await ResponseAsignatura.Content.ReadAsStringAsync();
-                    DataTable data = JsonConvert.DeserializeObject<DataTable>(response);
-
-                    foreach (DataRow row in data.Rows)
-                    {
-                        Profesores profesor = new Profesores();
-                        profesor.Id = row["Id"].ToString();
-                        profesor.Nombre = row["Nombre"].ToString();
-                        profesor.Apellido = row["Apellido"].ToString();
-                        profesor.Edad = row["Edad"].ToString();
-                        profesor.Direccion = row["Direccion"].ToString();
-                        profesor.Telefono = row["Telefono"].ToString();
-                        profesor.Asignatura = row["Asignatura"].ToString();
-                        //var materia = await new HomeController().ObtenerAsignauraAsync();
-                        //foreach (var item in materia)
-                        //{
-                        //    if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
-                        //    {
-                        //        profesor.Asignatura = item.Nombre;
-                        //    }
-                        //}
-
-                        profesorList.Add(profesor);
-                    }
+                    List<Profesor> data = JsonConvert.DeserializeObject<List<Profesor>>(response);
                     
-                    return profesorList;
+                    return data;
                 }
                 else
                 {
@@ -208,27 +158,16 @@ namespace Colegio.Controllers
         {
             try
             {
-                List<Asignatura> AsignaturaList = new List<Asignatura>();
-
                 HttpClient client = new HttpClient();
 
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/lista/asignaturas";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/listar" + "?name=asignatura";
                 HttpResponseMessage ResponseAsignatura = await client.GetAsync(apiCrud);
                 if (ResponseAsignatura.IsSuccessStatusCode)
                 {
                     string response = await ResponseAsignatura.Content.ReadAsStringAsync();
-                    DataTable data = JsonConvert.DeserializeObject<DataTable>(response);
-
-                    foreach (DataRow row in data.Rows)
-                    {
-                        Asignatura asignatura = new Asignatura();
-                        asignatura.Id = row["Id"].ToString();
-                        asignatura.Nombre = row["Nombre"].ToString();
-
-                        AsignaturaList.Add(asignatura);
-                    }
+                   List<Asignatura> data = JsonConvert.DeserializeObject<List<Asignatura>>(response);
                     
-                    return AsignaturaList;
+                    return data;
                 }
                 else
                 {
@@ -237,7 +176,7 @@ namespace Colegio.Controllers
             }
             catch (Exception ex)
             {
-                return View("Error", ex.Message);
+                return null;
             }
         }
 
@@ -245,10 +184,6 @@ namespace Colegio.Controllers
         {
             try
             {
-                List<Alumno> alumnosList = new List<Alumno>();
-                List<Profesores> profesorList = new List<Profesores>();
-                List<Asignatura> asignaturaList = new List<Asignatura>();
-
                 HttpClient client = new HttpClient();
                 string url = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/buscar" + "?Id=" + buscar + "&asg=" + asg + "&name=" + name;
 
@@ -256,119 +191,40 @@ namespace Colegio.Controllers
                 if (httpResponse.IsSuccessStatusCode)
                 {
                     string response = await httpResponse.Content.ReadAsStringAsync();
-                    DataTable data = JsonConvert.DeserializeObject<DataTable>(response);
-                    switch (data.Rows[0].ItemArray.Length)
+                    switch (name)
                     {
-                        case 2:
-                            foreach (DataRow row in data.Rows)
-                            {
-                                Asignatura asignatura = new Asignatura();
-                                asignatura.Id = row["Id"].ToString();
-                                asignatura.Nombre = row["Nombre"].ToString();
-
-                                asignaturaList.Add(asignatura);
-                            }
+                        case "alumno":
+                            List<Alumno> dataAlm = JsonConvert.DeserializeObject<List<Alumno>>(response);
                             if (accion != null)
                             {
-                                return asignaturaList;
+                                return dataAlm;
                             }
                             else
                             {
-                                Session["Lista"] = asignaturaList;
-                                return RedirectToAction("ListaAsignatura", "Lists");
-                            }
-                        case 7:
-                            foreach (DataRow row in data.Rows)
-                            {
-                                Profesores profesor = new Profesores();
-                                profesor.Id = row["Id"].ToString();
-                                profesor.Nombre = row["Nombre"].ToString();
-                                profesor.Apellido = row["Apellido"].ToString();
-                                profesor.Edad = row["Edad"].ToString();
-                                profesor.Direccion = row["Direccion"].ToString();
-                                profesor.Telefono = row["Telefono"].ToString();
-                                profesor.Asignatura = row["Asignatura"].ToString();
-
-                                profesorList.Add(profesor);
-                            }
-                            if (accion != null)
-                            {
-                                return profesorList;
-                            }
-                            else
-                            {
-                                Session["Lista"] = profesorList;
-                                return RedirectToAction("ListaProfesores", "Lists");
-                            }
-                        case 8:
-                            foreach (DataRow row in data.Rows)
-                            {
-                                Alumno alumno = new Alumno();
-                                alumno.Id = row["Id"].ToString();
-                                alumno.Nombre = row["Nombre"].ToString();
-                                alumno.Apellido = row["Apellido"].ToString();
-                                alumno.Edad = row["Edad"].ToString();
-                                alumno.Direccion = row["Direccion"].ToString();
-                                alumno.Telefono = row["Telefono"].ToString();
-                                alumno.Asignatura = row["Asignatura"].ToString();
-                                alumno.Calificacion = row["Calificacion"].ToString();
-
-                                alumnosList.Add(alumno);
-                            }
-                            if (accion != null)
-                            {
-                                return alumnosList;
-                            }
-                            else
-                            {
-                                Session["Lista"] = alumnosList;
+                                Session["Lista"] = dataAlm;
                                 return RedirectToAction("ListaAlumnos", "Lists");
                             }
-                        
-                        
+                        case "profesor":
+                            List<Profesor> dataPrf = JsonConvert.DeserializeObject<List<Profesor>>(response);
+                            if (accion != null)
+                            {
+                                return dataPrf;
+                            }
+                            else
+                            {
+                                Session["Lista"] = dataPrf;
+                                return RedirectToAction("ListaProfesores", "Lists");
+                            }
+                        case "asignatura":
+                            List<Asignatura> dataAsg = JsonConvert.DeserializeObject<List<Asignatura>>(response);
+                            Session["Lista"] = dataAsg;
+                            return RedirectToAction("ListaAsignatura", "Lists");
+                        default: return RedirectToAction("ListaAlumnos", "Lists");
                     }
-
-                    //if (accion != null)
-                    //{
-                    //    switch (accion)
-                    //    {
-                    //        case "registro":
-                    //            alumno.Asignatura = row["Asignatura"].ToString();
-                    //            break;
-                    //        case "Editar":
-                    //            var materia = await new HomeController().ObtenerAsignauraAsync();
-                    //            foreach (var item in materia)
-                    //            {
-                    //                if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
-                    //                {
-                    //                    alumno.Asignatura = item.Codigo;
-                    //                }
-                    //            }
-                    //            break;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    var materia = await new HomeController().ObtenerAsignauraAsync();
-                    //    foreach (var item in materia)
-                    //    {
-                    //        if (item.Codigo.ToString().Equals(row["Asignatura"].ToString()))
-                    //        {
-                    //            alumno.Asignatura = item.Nombre;
-                    //        }
-                    //    }
-                    //}                      
-
-                    //alumno.Calificacion = row["Calificacion"].ToString();
-
-                }
-                if(alumnosList != null)
-                {
-                    return RedirectToAction("ListaAlumnos", "Lists");
                 }
                 else
                 {
-                    return RedirectToAction("ListaProfesores", "Lists");
+                    return View("Error");
                 }
             }
             catch (Exception ex)

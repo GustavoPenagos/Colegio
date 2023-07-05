@@ -16,10 +16,10 @@ namespace Colegio.Controllers
 {
     public class CrudController : Controller
     {
-        public ActionResult Eliminar(string id, string name)
-        {
-            return RedirectToAction("ListaAlumnos", "Lists");
-        }
+        //public ActionResult Eliminar(string id, string name)
+        //{
+        //    return RedirectToAction("ListaAlumnos", "Lists");
+        //}
 
         public async Task<dynamic> Editar(string id, string asg, string name)
         {
@@ -27,15 +27,25 @@ namespace Colegio.Controllers
 
             string json = JsonConvert.SerializeObject(result);
 
-            return RedirectToAction("RegistroAsignatura", "Register", new { asignatura = json});
+            switch (name)
+            {
+                case "alumno":
+                    return RedirectToAction("RegistroAlumno", "Register", new { alumno = json });
+                case "profesor":
+                    return RedirectToAction("RegistroProfesor", "Register", new { profesor = json });
+                case "asignatura":
+                    return RedirectToAction("RegistroAsignatura", "Register", new { asignatura = json });
+                default:
+                    return RedirectToAction("Index", "Home");
+            }
         }
 
-        public async Task<dynamic> ActualizarAlumno(string identificacion, string nombre, string apellido, string edad, string direccion, string telefono, string asignatura, string calificacion = null)
+        public async Task<dynamic> ActualizarAlumno(string id, string nombre, string apellido, string edad, string direccion, string telefono, string asignatura, string calificacion = null)
         {
             try
             {
                 Alumno alumno = new Alumno();
-                alumno.Id = identificacion;
+ 
                 alumno.Nombre = nombre;
                 alumno.Apellido = apellido;
                 alumno.Edad = edad;
@@ -47,7 +57,7 @@ namespace Colegio.Controllers
                 var jsonAlumno = new StringContent(JsonConvert.SerializeObject(alumno), Encoding.UTF8, "application/json");
 
                 HttpClient client = new HttpClient();
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/actualizar/alumnos";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/actualizar/alumno" + "?id=" + id + "&asg=" + asignatura;
                 HttpResponseMessage httpResponse = await client.PostAsync(apiCrud, jsonAlumno);
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -69,12 +79,84 @@ namespace Colegio.Controllers
             }
         }
 
-        public async Task<dynamic> EliminarAlumno(string id)
+        public async Task<dynamic> ActualizarProfesor(string id, string nombre, string apellido, string edad, string direccion, string telefono, string asignatura)
+        {
+            try
+            {
+                Profesor alumno = new Profesor();
+
+                alumno.Nombre = nombre;
+                alumno.Apellido = apellido;
+                alumno.Edad = edad;
+                alumno.Direccion = direccion;
+                alumno.Telefono = telefono;
+                alumno.Asignatura = asignatura;
+
+
+                var jsonProfesor = new StringContent(JsonConvert.SerializeObject(alumno), Encoding.UTF8, "application/json");
+
+                HttpClient client = new HttpClient();
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/actualizar/profesor" + "?id=" + id;
+                HttpResponseMessage httpResponse = await client.PostAsync(apiCrud, jsonProfesor);
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    TempData["AlertMessage"] = "¡Datos guardados correctamente!";
+                    TempData["AlertType"] = "success";
+                    return RedirectToAction("ListaProfesores", "Lists");
+                }
+                else
+                {
+                    TempData["AlertMessage"] = "¡Datos no guardados!";
+                    TempData["AlertType"] = "success";
+                    return RedirectToAction("ListaProfesores", "Lists");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return View("Error", ex.Message);
+            }
+        }
+
+        public async Task<dynamic> ActualizarAsignatura(string id, string nombre)
+        {
+            try
+            {
+                Asignatura alumno = new Asignatura();
+
+                alumno.Nombre = nombre;
+
+                var jsonAsignatura = new StringContent(JsonConvert.SerializeObject(alumno), Encoding.UTF8, "application/json");
+
+                HttpClient client = new HttpClient();
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/actualizar/asignatura" + "?id=" + id;
+                HttpResponseMessage httpResponse = await client.PostAsync(apiCrud, jsonAsignatura);
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    TempData["AlertMessage"] = "¡Datos guardados correctamente!";
+                    TempData["AlertType"] = "success";
+                    return RedirectToAction("ListaAsignatura", "Lists");
+                }
+                else
+                {
+                    TempData["AlertMessage"] = "¡Datos no guardados!";
+                    TempData["AlertType"] = "success";
+                    return RedirectToAction("ListaAsignatura", "Lists");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return View("Error", ex.Message);
+            }
+        }
+
+        public async Task<dynamic> Eliminar(string id, string asg, string name)
         {
             try
             {
                 HttpClient client = new HttpClient();
-                string url = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/eliminar/alumno?id=" + id;
+                string url = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/eliminar" + "?id=" + id + "&asg=" + asg + "&name=" + name;
                 HttpResponseMessage httpResponse = await client.GetAsync(url);
                 if(httpResponse.IsSuccessStatusCode)
                 {

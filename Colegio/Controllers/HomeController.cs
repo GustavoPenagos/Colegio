@@ -44,26 +44,16 @@ namespace Colegio.Controllers
         {
             try
             {
-                List<Asignatura> asignaturasList = new List<Asignatura>();
-
                 HttpClient client = new HttpClient();
 
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/lista/asignaturas";
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/listar" + "?name=asignatura";
                 HttpResponseMessage ResponseAsignatura = await client.GetAsync(apiCrud);
                 if (ResponseAsignatura.IsSuccessStatusCode)
                 {
                     string response = await ResponseAsignatura.Content.ReadAsStringAsync();
-                    DataTable data = JsonConvert.DeserializeObject<DataTable>(response);
-
-                    foreach (DataRow row in data.Rows)
-                    {
-                        Asignatura asignatura = new Asignatura();
-                        asignatura.Id = row["Id"].ToString();
-                        asignatura.Nombre = row["Nombre"].ToString();
-                        asignaturasList.Add(asignatura);
-                    }
-
-                    return asignaturasList;
+                    List<Asignatura> data = JsonConvert.DeserializeObject<List<Asignatura>>(response);
+                    
+                    return data;
                 }
                 else
                 {

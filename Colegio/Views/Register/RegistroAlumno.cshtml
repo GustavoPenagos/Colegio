@@ -172,7 +172,8 @@ else
                                 <br /><br />
                                 @foreach (var ito in ViewBag.Opciones)
                                 {
-                                    <input type="text" value="@ito.Nombre" readonly />
+                                    <input type="text" id="asignaturaOld" value="@ito.Id" name="asignaturaOld" readonly/>
+                                        
                                 }
                             </td>
                         </tr>

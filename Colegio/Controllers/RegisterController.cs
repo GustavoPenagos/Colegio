@@ -159,7 +159,7 @@ namespace Colegio.Controllers
                 alumno.Direccion = direccion;
                 alumno.Telefono = telefono;
                 alumno.Asignatura= asignatura;
-                alumno.Calificacion = calificacion == null ? "" : calificacion;
+                alumno.Calificacion = asignatura.Equals("0") ? "" : calificacion;
 
 
                 if(await ValidarAlumno(alumno))

@@ -40,7 +40,7 @@ namespace Colegio.Controllers
             }
         }
 
-        public async Task<dynamic> ActualizarAlumno(string id, string nombre, string apellido, string edad, string direccion, string telefono, string asignatura, string calificacion = null)
+        public async Task<dynamic> ActualizarAlumno(string id, string nombre, string apellido, string edad, string direccion, string telefono, string asignatura, string asignaturaOld, string calificacion = null)
         {
             try
             {
@@ -55,9 +55,9 @@ namespace Colegio.Controllers
                 alumno.Calificacion = calificacion == null ? "" : calificacion;
 
                 var jsonAlumno = new StringContent(JsonConvert.SerializeObject(alumno), Encoding.UTF8, "application/json");
-
+               
                 HttpClient client = new HttpClient();
-                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/actualizar/alumno" + "?id=" + id + "&asg=" + asignatura;
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/actualizar/alumno" + "?id=" + id + "&asg=" + asignatura + "&asgOld=" + asignaturaOld;
                 HttpResponseMessage httpResponse = await client.PostAsync(apiCrud, jsonAlumno);
                 if (httpResponse.IsSuccessStatusCode)
                 {
@@ -168,7 +168,20 @@ namespace Colegio.Controllers
                     TempData["AlertMessage"] = "¡Datos no guardados!";
                     TempData["AlertType"] = "error";
                 }
-                return RedirectToAction("ListaAlumnos", "Lists");
+                switch (name)
+                {
+                    case "alumno":
+                        return RedirectToAction("ListaAlumnos", "Lists");
+
+                    case "profesor":
+                        return RedirectToAction("ListaProfesores", "Lists");
+
+                    case "asignatura":
+                        return RedirectToAction("ListaAsignatura", "Lists");
+
+                    default: return RedirectToAction("Index", "Home");
+                }
+                
 
             }
             catch(Exception ex)

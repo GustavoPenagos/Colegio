@@ -23,9 +23,9 @@ namespace Colegio.Controllers
         {
             try
             {
-                //var dataAlumno = await new ListsController().ObtenerAlumnoAsync();
-
-                return View();
+                var dataAlumno = await Reporte();
+                ViewBag.Message = "Reporte de estudiantes";
+                return View(dataAlumno);
             }
             catch (Exception ex)
             {
@@ -63,6 +63,32 @@ namespace Colegio.Controllers
             catch (Exception ex)
             {
                 return View("Error", ex.Message);
+            }
+        }
+
+        public async Task<dynamic> Reporte()
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+                string apiCrud = System.Configuration.ConfigurationManager.AppSettings["UrlAPI"] + "api/reporte";
+                HttpResponseMessage ResponseAsignatura = await client.GetAsync(apiCrud);
+                if (ResponseAsignatura.IsSuccessStatusCode)
+                {
+                    string response = await ResponseAsignatura.Content.ReadAsStringAsync();
+                    List<Reporte> data = JsonConvert.DeserializeObject<List<Reporte>>(response);
+
+
+                    return data;
+                }
+                else
+                {
+                    return View("Error");
+                }
+            }
+            catch(Exception ex)
+            {
+                return View("Error");
             }
         }
     }

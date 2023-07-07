@@ -128,6 +128,7 @@
     <Compile Include="Models\Alumno.cs" />
     <Compile Include="Models\Asignatura.cs" />
     <Compile Include="Models\Profesor.cs" />
+    <Compile Include="Models\Reporte.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -214,7 +215,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Content\Images\" />
     <Folder Include="Data\" />
-    <Folder Include="Views\CRUD\" />
     <Folder Include="Views\Update\" />
   </ItemGroup>
   <ItemGroup>

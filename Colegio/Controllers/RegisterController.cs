@@ -180,6 +180,11 @@ namespace Colegio.Controllers
                         TempData["AlertType"] = "error";
                     }
                 }
+                else
+                {
+                    TempData["AlertMessage"] = "XxX¡Datos no guardados!XxX";
+                    TempData["AlertType"] = "success";
+                }
                 return RedirectToAction("RegistroAlumno", "Register");
             }
             catch(Exception ex)
@@ -304,19 +309,11 @@ namespace Colegio.Controllers
                 {
                     try 
                     {
-                        var json = JsonConvert.SerializeObject(await new ListsController().Buscar(alumno.Id, alumno.Asignatura, "Alumno", "registro"));
+                        var json = JsonConvert.SerializeObject(await new ListsController().Buscar(alumno.Id, alumno.Asignatura, "alumno", "registro"));
                         List<Alumno> dJson = JsonConvert.DeserializeObject<List<Alumno>>(json);
 
-                        if (dJson != null)
+                        if (dJson.Count == 0)
                         {
-                            foreach (var item in dJson)
-                            {
-                                if ((alumno.Id.Equals(item.Id)) && (alumno.Asignatura.Equals(item.Asignatura)))
-                                {
-                                    return false;
-                                }
-
-                            }
                             return true;
                         }
                         else

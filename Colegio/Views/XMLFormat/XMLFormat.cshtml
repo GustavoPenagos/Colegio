@@ -1,0 +1,35 @@
+﻿
+@{
+    ViewBag.Title = "XMLFormat";
+}
+
+<h2>XMLFormat</h2>
+
+<main aria-labelledby="title">
+    <h2 id="title">@ViewBag.Title.</h2>
+    <h3></h3>
+
+    <br />
+        <table class="table table-striped">
+            <thead class="bg-dark">
+                <tr class="text-white">
+                    <td>Id</td>
+                    <td>Nombre</td>
+                    <td>valor total</td>
+                    <td>Iva</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Nombre</td>
+                        <td>@item.Valor</td>
+                        <td>@item.Iva</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</main>

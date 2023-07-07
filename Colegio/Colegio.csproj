@@ -121,7 +121,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ListsController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
-    <Compile Include="Controllers\SearchController.cs" />
+    <Compile Include="Controllers\XMLFormatController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -129,6 +129,7 @@
     <Compile Include="Models\Asignatura.cs" />
     <Compile Include="Models\Profesor.cs" />
     <Compile Include="Models\Reporte.cs" />
+    <Compile Include="Models\XMLFormat\XMLFormat.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -210,12 +211,12 @@
     <Content Include="Views\Register\RegistroAlumno.cshtml" />
     <Content Include="Views\Register\RegistroProfesor.cshtml" />
     <Content Include="Views\Register\RegistroAsignatura.cshtml" />
+    <Content Include="Views\XMLFormat\XMLFormat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\Images\" />
     <Folder Include="Data\" />
-    <Folder Include="Views\Update\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
